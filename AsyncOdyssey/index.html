@@ -1,11 +1,111 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estación Meteorológica de la U-TAD</title>
+  
+  <!-- Enlace a la hoja de estilos -->
+  <link rel="stylesheet" href="./src/style.css" />
+  
+  <!-- Punto de entrada JS como módulo ES (necesario en Vite) -->
+  <script type="module" src="./src/main.js"></script>
 </head>
 <body>
-  
+
+  <!-- Contenedor general para centrar y estructurar la interfaz -->
+  <main class="app-container">
+
+    <!-- Encabezado de la aplicación -->
+    <header class="app-header">
+      <h1 class="app-title">Estación Meteorológica de la U-TAD</h1>
+    </header>
+
+    <!-- Zona accesible para avisos: mensajes de carga y errores de red/API -->
+    <section id="feedback-zone" aria-live="polite">
+      <!-- Estado de carga: se mostrará con JS mientras el fetch esté pendiente -->
+      <div id="loading-spinner" class="status-message hidden" role="status">
+        <p>Consultando datos meteorológicos...</p>
+      </div>
+
+      <!-- Estado de error: se rellenará y mostrará si la petición falla o la respuesta no es ok -->
+      <div id="error-box" class="status-message error hidden" role="alert">
+        <p id="error-text"></p>
+      </div>
+    </section>
+
+    <!-- Panel principal con los datos del tiempo -->
+    <section id="weather-display" class="weather-card">
+      
+      <!-- Ciudad activa y Temperatura principal -->
+      <div class="current-core">
+        <h2 id="current-city" class="city-name">Madrid</h2>
+        <div class="temp-wrapper">
+          <span id="current-temp" class="main-temperature">--</span>
+          <span class="temp-unit">°C</span>
+        </div>
+        <p id="weather-description" class="weather-desc">Cargando condiciones...</p>
+      </div>
+
+      <!-- Parámetros meteorológicos secundarios (humedad, viento, lluvia) -->
+      <div class="weather-metrics">
+        <!-- Humedad -->
+        <article class="metric-item">
+          <span class="metric-label">Humedad</span>
+          <span id="humidity-value" class="metric-value">--%</span>
+        </article>
+
+        <!-- Viento -->
+        <article class="metric-item">
+          <span class="metric-label">Viento</span>
+          <span id="wind-value" class="metric-value">-- km/h</span>
+        </article>
+
+        <!-- Probabilidad de lluvia -->
+        <article class="metric-item">
+          <span class="metric-label">Prob. Lluvia</span>
+          <span id="rain-value" class="metric-value">--%</span>
+        </article>
+      </div>
+
+      <!-- 3. Selector de ciudad (justo debajo de los datos principales, Madrid por defecto) -->
+      <section class="city-selector-section">
+        <form id="city-form" class="city-form">
+          <label for="city-select" class="selector-label">Cambiar ubicación:</label>
+          <div class="selector-controls">
+            <select id="city-select" name="city">
+              <option value="Madrid" selected>Madrid</option>
+              <option value="Las Rozas de Madrid">Las Rozas</option>
+              <option value="Barcelona">Barcelona</option>
+              <option value="Valencia">Valencia</option>
+              <option value="Sevilla">Sevilla</option>
+              <option value="Bilbao">Bilbao</option>
+            </select>
+            <!-- Campo de texto opcional para buscar cualquier otra ciudad del mundo -->
+            <input 
+              type="text" 
+              id="city-input" 
+              placeholder="O escribe otra ciudad..." 
+              autocomplete="off"
+            />
+            <button type="submit" id="search-btn">Consultar</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- 4. Previsiones para el día (tramos horarios o pronóstico extendido) -->
+      <section class="forecast-section">
+        <h3 class="forecast-title">Previsión del día</h3>
+        <!-- JS generará dinámicamente las tarjetas de cada intervalo aquí mediante métodos de array -->
+        <div id="forecast-container" class="forecast-grid">
+          <!-- Ejemplo de slot vacío mientras carga -->
+          <p class="placeholder-text">Esperando datos de la previsión...</p>
+        </div>
+      </section>
+
+    </section>
+
+  </main>
+
 </body>
 </html>
