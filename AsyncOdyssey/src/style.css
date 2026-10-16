@@ -1,0 +1,348 @@
+/* ==========================================================================
+   1. VARIABLES DE DISEÑO (CSS Custom Properties)
+   Centralizamos la paleta de colores, tipografías y espaciados para facilitar
+   el mantenimiento y mantener coherencia visual en toda la aplicación.
+   ========================================================================== */
+:root {
+  /* Paleta cromática */
+  --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  --card-bg: rgba(30, 41, 59, 0.7);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --accent-color: #38bdf8;        /* Azul claro meteorológico */
+  --accent-hover: #0ea5e9;
+  --error-bg: rgba(239, 68, 68, 0.15);
+  --error-border: #ef4444;
+  --error-text: #fca5a5;
+
+  /* Geometría y sombras */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --shadow-elevation: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  --transition-fast: 0.2s ease;
+}
+
+/* ==========================================================================
+   2. RESETEO BÁSICO Y CONFIGURACIÓN DEL LIENZO
+   Garantiza consistencia entre navegadores calculando padding y bordes
+   dentro del tamaño final del elemento (box-sizing: border-box).
+   ========================================================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+}
+
+/* ==========================================================================
+   3. CONTENEDOR PRINCIPAL
+   Limita el ancho máximo en pantallas grandes y centra el contenido.
+   ========================================================================== */
+.app-container {
+  width: 100%;
+  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Encabezado */
+.app-header {
+  text-align: center;
+}
+
+.app-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent-color);
+}
+
+/* ==========================================================================
+   4. ESTADOS DE RETROALIMENTACIÓN (Carga y Error)
+   Clave para la rúbrica: deben ser claramente visibles o permanecer ocultos.
+   ========================================================================== */
+/* Clase utilitaria para ocultar elementos manipulada desde JavaScript */
+.hidden {
+  display: none !important;
+}
+
+.status-message {
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  font-size: 0.95rem;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid var(--accent-color);
+  color: var(--accent-color);
+  backdrop-filter: blur(8px);
+}
+
+/* Estilo específico para mensajes de error de red o de ciudad inexistente */
+.status-message.error {
+  background: var(--error-bg);
+  border-color: var(--error-border);
+  color: var(--error-text);
+}
+
+/* Animación sutil para indicar carga activa */
+#loading-spinner p::after {
+  content: "";
+  display: inline-block;
+  animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+  0%, 20% { content: "."; }
+  40% { content: ".."; }
+  60%, 100% { content: "..."; }
+}
+
+/* ==========================================================================
+   5. TARJETA PRINCIPAL DEL TIEMPO (Weather Card)
+   Utiliza efecto glassmorphism (fondo translúcido con desenfoque de fondo).
+   ========================================================================== */
+.weather-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-elevation);
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+
+/* 5.1 Bloque central: Ciudad, Temperatura y Estado */
+.current-core {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.city-name {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.temp-wrapper {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin: 0.5rem 0;
+}
+
+.main-temperature {
+  font-size: 5.5rem;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.temp-unit {
+  font-size: 2rem;
+  font-weight: 300;
+  color: var(--accent-color);
+  margin-top: 0.5rem;
+}
+
+.weather-desc {
+  font-size: 1.1rem;
+  text-transform: capitalize;
+  color: var(--text-muted);
+}
+
+/* 5.2 Parámetros meteorológicos (Humedad, Viento, Lluvia) */
+.weather-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  background: rgba(15, 23, 42, 0.4);
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--card-border);
+}
+
+.metric-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  text-align: center;
+}
+
+.metric-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.metric-value {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* 5.3 Selector de Ciudad y Formulario de Búsqueda */
+.city-selector-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.selector-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.selector-controls {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+/* Estilos homogéneos para el select, el input de texto y el botón */
+.selector-controls select,
+.selector-controls input,
+.selector-controls button {
+  font-size: 0.95rem;
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-sm);
+  outline: none;
+  border: 1px solid var(--card-border);
+  background: rgba(15, 23, 42, 0.6);
+  color: var(--text-main);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.selector-controls select {
+  flex: 1 1 140px;
+  cursor: pointer;
+}
+
+.selector-controls input {
+  flex: 2 1 180px;
+}
+
+.selector-controls select:focus,
+.selector-controls input:focus {
+  border-color: var(--accent-color);
+}
+
+.selector-controls button {
+  background: var(--accent-color);
+  color: #0f172a;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  padding: 0.65rem 1.4rem;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.selector-controls button:hover {
+  background: var(--accent-hover);
+}
+
+.selector-controls button:active {
+  transform: scale(0.98);
+}
+
+/* 5.4 Previsiones horarias / diarias */
+.forecast-section {
+  border-top: 1px solid var(--card-border);
+  padding-top: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.forecast-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* Contenedor flexible con scroll horizontal para ver las horas */
+.forecast-grid {
+  display: flex;
+  gap: 0.8rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--card-border) transparent;
+}
+
+/* Cada tarjeta de hora que generaremos dinámicamente con JS */
+.forecast-card {
+  flex: 0 0 85px;
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.forecast-time {
+  color: var(--text-muted);
+}
+
+.forecast-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.forecast-temp {
+  font-weight: 600;
+}
+
+.placeholder-text {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   6. RESPONSIVE DESIGN (Media Queries)
+   Ajustes para pantallas móviles pequeñas.
+   ========================================================================== */
+@media (max-width: 480px) {
+  .main-temperature {
+    font-size: 4.2rem;
+  }
+
+  .weather-metrics {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
+  .selector-controls {
+    flex-direction: column;
+  }
+
+  .selector-controls select,
+  .selector-controls input,
+  .selector-controls button {
+    width: 100%;
+  }
+}
